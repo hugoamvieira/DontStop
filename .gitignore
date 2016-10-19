@@ -21,6 +21,8 @@ ExportedObj/
 *.booproj
 *.svd
 
+# Rider Generated Files
+/.idea/
 
 # Unity3D generated meta files
 *.pidb.meta
