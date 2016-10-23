@@ -32,16 +32,19 @@ public class PlayerController : MonoBehaviour
 		// TODO: Change to touch bindings
 		if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
 		{
-			// Play jump animation
-			_anim.SetInteger("AnimState", 2);
 			transform.Translate(new Vector3(walkSpeed, 0, 0));
 
 			// Check if player has previous force applied to it on the Y axis. If not, make it jump
 			if (_playerRigidbody.velocity.y > 0f || _playerRigidbody.velocity.y < 0f && _playerRigidbody)
 			{
+				// Play jump animation
+				_anim.SetInteger("AnimState", 2);
 			}
 			else
 			{
+				// Play jump animation
+				_anim.SetInteger("AnimState", 2);
+
 				//Player jump
 				_playerRigidbody.AddForce(new Vector2(0, jumpForce));
 			}
