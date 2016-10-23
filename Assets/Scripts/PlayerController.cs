@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 
-	void Update()
+	void FixedUpdate()
 	{
 		// PC Bindings for now.
 		// TODO: Change to touch bindings

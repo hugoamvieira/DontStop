@@ -31,7 +31,7 @@ public class Tiling : MonoBehaviour
 	}
 
 
-	void Update()
+	void FixedUpdate()
 	{
 		// Does it need new sprites? If not, no action is needed
 		if (hasRightSprite == false)

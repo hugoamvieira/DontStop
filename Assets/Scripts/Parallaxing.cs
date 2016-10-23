@@ -34,7 +34,7 @@ public class Parallaxing : MonoBehaviour
 	}
 
 
-	void Update()
+	void FixedUpdate()
 	{
 		for (int i = 0; i < backgrounds.Length; i++)
 		{
