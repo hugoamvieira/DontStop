@@ -6,11 +6,17 @@ public class PlayerController : MonoBehaviour
 	// Components
 	private Animator _anim;
 	private Rigidbody2D _playerRigidbody;
-	private SpriteRenderer _playerSr;
 
 	// Editable Vars
 	public float walkSpeed;
 	public float jumpForce;
+
+
+	void Awake()
+	{
+		_anim = GetComponent<Animator>();
+		_playerRigidbody = GetComponent<Rigidbody2D>();
+	}
 
 
 	void Start()
@@ -18,19 +24,11 @@ public class PlayerController : MonoBehaviour
 	}
 
 
-	void OnEnable()
-	{
-		_anim = GetComponent<Animator>();
-		_playerRigidbody = GetComponent<Rigidbody2D>();
-		_playerSr = GetComponent<SpriteRenderer>();
-	}
-
-
 	void FixedUpdate()
 	{
 		// PC Bindings for now.
 		// TODO: Change to touch bindings
-		if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+		if (Input.GetKey(KeyCode.Space))
 		{
 			transform.Translate(new Vector3(walkSpeed, 0, 0));
 
@@ -40,6 +38,7 @@ public class PlayerController : MonoBehaviour
 				// Play jump animation
 				_anim.SetInteger("AnimState", 2);
 			}
+
 			else
 			{
 				// Play jump animation
@@ -50,7 +49,7 @@ public class PlayerController : MonoBehaviour
 			}
 		}
 
-		else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+		else if (Input.GetKey(KeyCode.S))
 		{
 			_anim.SetInteger("AnimState", 3);
 			transform.Translate(new Vector3(walkSpeed, 0, 0));
