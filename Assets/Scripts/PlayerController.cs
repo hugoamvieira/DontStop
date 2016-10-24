@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
 	{
 		// PC Bindings for now.
 		// TODO: Change to touch bindings
-		if (Input.GetKey(KeyCode.Space))
+		if (Input.GetKey(KeyCode.Space) || TouchController.TappedScreen())
 		{
 			transform.Translate(new Vector3(walkSpeed, 0, 0));
 
@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
 			}
 		}
 
-		else if (Input.GetKey(KeyCode.S))
+		else if (Input.GetKey(KeyCode.S) || TouchController.SwipedDown())
 		{
 			_anim.SetInteger("AnimState", 3);
 			transform.Translate(new Vector3(walkSpeed, 0, 0));
