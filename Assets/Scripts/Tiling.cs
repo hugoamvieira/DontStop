@@ -1,19 +1,20 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿// TODO: Implement Object Pulling instead of new tile creation indefinitely.
+
+using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(SpriteRenderer))] // Requires a SpriteRenderer element
 public class Tiling : MonoBehaviour
 {
-	private float _spriteWidth; // Element width
-
-	// Performance Reasons
-	private Camera _camera;
 	private Transform _objTransform;
+	private Camera _camera;
 
-	public int offsetX = 2; // Offset to prevent wrong clipping
+	private bool hasRightSprite; // Used to check if it's needed to instantiate things
+	private float _spriteWidth; // Element width
+	private const int OffsetX = 2; // Offset to prevent wrong clipping
 
-	// Used to check if it's needed to instantiate things
-	public bool hasRightSprite = false;
+
+	private Stack<Transform> _tileStack; // Object Pulling Stack
 
 
 	void Awake()
@@ -22,6 +23,7 @@ public class Tiling : MonoBehaviour
 		_camera = Camera.main;
 		_objTransform = transform;
 	}
+
 
 	void Start()
 	{
@@ -41,10 +43,9 @@ public class Tiling : MonoBehaviour
 
 			// Calculate the x pos where the camera can see the edge of the sprite
 			float edgeVisiblePosRight = (_objTransform.position.x + (_spriteWidth / 2)) - camHorizontalExtent;
-			// This might not be needed for me
 
 			// Check if camera can see the sprite edge
-			if (_camera.transform.position.x >= edgeVisiblePosRight - offsetX && hasRightSprite == false)
+			if (_camera.transform.position.x >= edgeVisiblePosRight - OffsetX && hasRightSprite == false)
 			{
 				InstantiateSprite();
 				hasRightSprite = true;

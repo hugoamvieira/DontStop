@@ -1,27 +1,34 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
 	// Components
 	private Animator _anim;
 	private Rigidbody2D _playerRigidbody;
-	private PolygonCollider2D _playerCollider;
-	private bool isJumping;
-	private bool isCrouching;
 
-	// Editable Vars
-	public float walkSpeed;
+	// Anim states
+	private const string AnimParamName = "AnimState";
+	private const int RunAnimState = 1;
+	private const int JumpAnimState = 2;
+	private const int CrouchAnimState = 3;
+
+	// Forces
+	public float walkForce;
 	public float jumpForce;
-	public Vector2[] standingCollider = new Vector2[4];
-	public Vector2[] crouchingCollider = new Vector2[4];
+
+	// Max speeds
+	public float maxSpeedX;
+	public float maxSpeedY;
+
+	// Flags (These are set through the animations)
+	public bool isJumping;
+	public bool isCrouching;
 
 
 	void Awake()
 	{
-		_anim = GetComponent<Animator>();
-		_playerRigidbody = GetComponent<Rigidbody2D>();
-		_playerCollider = GetComponent<PolygonCollider2D>();
+		_anim = gameObject.GetComponent<Animator>();
+		_playerRigidbody = gameObject.GetComponent<Rigidbody2D>();
 	}
 
 
@@ -32,69 +39,40 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		// Events based on touch bindings. Has PC bindings due to testing on PC
+		// Engage endless running mode
+		if (_playerRigidbody.velocity.x <= maxSpeedX)
+		{
+			_playerRigidbody.AddForce(new Vector2(walkForce, 0));
+		}
+
+
+		// Handle user input
 		if (Input.GetKey(KeyCode.Space) || TouchController.TappedScreen())
 		{
-			if (!Input.GetKey(KeyCode.S) || TouchController.SwipedDown())
+			if (isCrouching) return;
+
+			// If the player's Y-axis speed doesn't exceed the set max Y speed
+			// and if the player is on the ground (ie. Y-axis velocity == 0):
+			if (_playerRigidbody.velocity.y <= maxSpeedY && _playerRigidbody.velocity.y == 0f)
 			{
-				// Set flags
-				isJumping = true;
-				isCrouching = false;
-
-				// Transform
-				transform.Translate(new Vector3(walkSpeed, 0, 0));
-			}
-
-			// Check if player has previous force applied to it on the Y axis.
-			if (_playerRigidbody.velocity.y > 0f || _playerRigidbody.velocity.y < 0f && _playerRigidbody)
-			{
-				// Jump animation
-				_anim.SetInteger("AnimState", 2);
-			}
-
-			// If not, make it jump.
-			else
-			{
-				// Jump animation
-				_anim.SetInteger("AnimState", 2);
-
-				//Player jump
+				// Change to jump animation and add jumping force
+				_anim.SetInteger(AnimParamName, JumpAnimState);
 				_playerRigidbody.AddForce(new Vector2(0, jumpForce));
 			}
 		}
 
-		// Player swipes down, crouching begins
 		else if (Input.GetKey(KeyCode.S) || TouchController.SwipedDown())
 		{
-			// Set flag
-			isCrouching = true;
-			isJumping = false;
+			if (isJumping) return;
 
-			// Crouch animation
-			_anim.SetInteger("AnimState", 3);
-			transform.Translate(new Vector3(walkSpeed, 0, 0));
+			// Change to crouch animation
+			_anim.SetInteger(AnimParamName, CrouchAnimState);
 		}
 
 		else
 		{
-			// Set flags
-			isCrouching = false;
-			isJumping = false;
-
-			// Move player forward
-			transform.Translate(new Vector3(walkSpeed, 0, 0));
-			_anim.SetInteger("AnimState", 1);
-		}
-
-		// Handle colliders
-		if (isCrouching)
-		{
-			_playerCollider.SetPath(0, crouchingCollider);
-		}
-
-		if (isJumping)
-		{
-			_playerCollider.SetPath(0, standingCollider);
+			// Running animation here due to nature of FixedUpdate()
+			_anim.SetInteger(AnimParamName, RunAnimState);
 		}
 	}
 }
