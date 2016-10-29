@@ -37,6 +37,6 @@ public class GameBehaviour : MonoBehaviour
 			_timeCounter = 0.0f;
 		}
 
-		Debug.Log("GameBehaviour: FPS = " + _lastFramerate);
+		// Debug.Log("GameBehaviour: FPS = " + _lastFramerate);
 	}
 }

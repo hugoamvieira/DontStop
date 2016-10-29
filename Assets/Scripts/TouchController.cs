@@ -1,19 +1,25 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 
 public class TouchController : MonoBehaviour
 {
+	private static bool _isSwiping;
+	private static Vector2 _lastPos;
+	private const float TapThreshold = 8f;
+
 	// This function detects if the user tapped the screen and returns
 	// a boolean value accordingly
-	public static bool TappedScreen()
+	public static bool TapToJump()
 	{
 		foreach (var touch in Input.touches)
 		{
-			if (touch.phase == TouchPhase.Ended)
-			{
-				Debug.Log("TouchController: User Tapped Screen");
-				return true;
-			}
+			// If the position delta for both x and y doesn't exceed a threshold
+			// (in place for those weird taps), then the user wants to jump.
+			return touch.phase == TouchPhase.Ended && touch.deltaPosition.x < TapThreshold &&
+			       touch.deltaPosition.y < TapThreshold;
 		}
+
 		return false;
 	}
 
@@ -24,12 +30,20 @@ public class TouchController : MonoBehaviour
 	{
 		foreach (var touch in Input.touches)
 		{
-			if (touch.phase == TouchPhase.Moved && touch.deltaPosition.sqrMagnitude != 0f)
+			if (touch.deltaPosition.sqrMagnitude != 0f)
 			{
-				Debug.Log("TouchController: User Swiped Down Magnitude:" + touch.deltaPosition.sqrMagnitude);
-				return true;
+				// Get position delta for touch
+				Vector2 deltaPos = touch.deltaPosition;
+
+				// Calculate absolute values for x and y deltas.
+				// If y < x && y < 0f, means the user is swiping down, so return true.
+				if (Mathf.Abs(deltaPos.x) < Mathf.Abs(deltaPos.y))
+				{
+					return deltaPos.y < 0f;
+				}
 			}
 		}
+
 		return false;
 	}
 }

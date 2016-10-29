@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
 
 		// Handle user input
-		if (Input.GetKey(KeyCode.Space) || TouchController.TappedScreen())
+		if (Input.GetKey(KeyCode.Space) || TouchController.TapToJump())
 		{
 			if (isCrouching) return;
 

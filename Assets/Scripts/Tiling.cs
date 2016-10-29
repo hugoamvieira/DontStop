@@ -1,4 +1,4 @@
-﻿// TODO: Implement Object Pulling instead of new tile creation indefinitely.
+﻿// TODO: Implement Object Polling instead of new tile creation indefinitely.
 
 using UnityEngine;
 using System.Collections.Generic;
