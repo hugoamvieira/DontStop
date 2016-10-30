@@ -16,8 +16,8 @@ public class TouchController : MonoBehaviour
 		{
 			// If the position delta for both x and y doesn't exceed a threshold
 			// (in place for those weird taps), then the user wants to jump.
-			return touch.phase == TouchPhase.Ended && touch.deltaPosition.x < TapThreshold &&
-			       touch.deltaPosition.y < TapThreshold;
+			return touch.phase == TouchPhase.Ended && Mathf.Abs(touch.deltaPosition.x) < TapThreshold &&
+			       Mathf.Abs(touch.deltaPosition.y) < TapThreshold;
 		}
 
 		return false;

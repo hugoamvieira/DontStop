@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour
 
 		else if (Input.GetKey(KeyCode.S) || TouchController.SwipedDown())
 		{
+			Debug.Log("S clicked. Jumping: " + isJumping + " Crouching: " + isCrouching);
 			if (isJumping) return;
 
 			// Change to crouch animation
