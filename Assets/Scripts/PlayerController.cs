@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Runtime.InteropServices;
-using System.Threading;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
