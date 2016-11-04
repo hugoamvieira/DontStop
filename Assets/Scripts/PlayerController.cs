@@ -28,11 +28,16 @@ public class PlayerController : MonoBehaviour
 	// Player Environment
 	public static float PosX { get; private set; }
 	public static float PosY { get; private set; }
-	public static bool CollidedShield { get; set; }
-	public static bool CollidedSlowmo { get; set; }
+	public static bool CollidedShieldPowerup { get; set; }
+	public static bool CollidedSlowmoPowerup { get; set; }
 	private float _distanceElapsed;
-	private bool _shieldActive;
 	private bool _slowMoActive;
+	public static bool ShieldActive { get; private set; } // Getter for shieldEnableTime active player property
+
+	// Power-ups environment
+	public float shieldEnableTime;
+	public float slowmoEnableTime;
+	public float slowmoFactor;
 
 
 	void Awake()
@@ -44,6 +49,11 @@ public class PlayerController : MonoBehaviour
 		// Set player Y Position. It's here because I only need this property for the power ups
 		// If it was on the Update method, power ups would spawn in the air whenever the player jumped.
 		PosY = transform.position.y;
+
+		// Set the power-ups properties (didn't want to make classes for each ¯\_(ツ)_/¯)
+		PowerUpController.ShieldEnableTime = shieldEnableTime;
+		PowerUpController.SlowmoEnableTime = slowmoEnableTime;
+		PowerUpController.SlowmoFactor = slowmoFactor;
 	}
 
 
@@ -89,25 +99,25 @@ public class PlayerController : MonoBehaviour
 		}
 
 		// Check collision with power ups
-		if (CollidedShield)
+		if (CollidedShieldPowerup)
 		{
 			StartCoroutine(ActivatePlayerShield());
 		}
-		else if (CollidedSlowmo)
+		else if (CollidedSlowmoPowerup)
 		{
 			StartCoroutine(ActivatePlayerSlowmo());
 		}
 	}
 
 
-	// This method activates the player shield, in which the player becomes invincible
+	// This method activates the player shieldEnableTime, in which the player becomes invincible
 	// for ShieldEnableTime seconds or until it collides with an object, whichever comes first.
 	private IEnumerator ActivatePlayerShield()
 	{
-		if (_shieldActive) yield break;
+		if (ShieldActive) yield break;
 
-		// TODO: Check if object collision here and destroy shield upon that.
-		_shieldActive = true;
+		// TODO: Check if object collision here and destroy shieldEnableTime upon that.
+		ShieldActive = true;
 
 		Debug.Log("Shield is in effect");
 
@@ -115,7 +125,7 @@ public class PlayerController : MonoBehaviour
 		yield return new WaitForSeconds(PowerUpController.ShieldEnableTime);
 
 		// Coroutine resumed: Shield time has expired. Deactivate it.
-		_shieldActive = false;
+		ShieldActive = false;
 		Debug.Log("Shield deactivated.");
 
 		yield return null;
@@ -130,12 +140,12 @@ public class PlayerController : MonoBehaviour
 
 		// Set slow mo as true and factor in the SlowMoFactoring to the game timeScale
 		_slowMoActive = true;
-		Time.timeScale *= PowerUpController.SlowMoFactoring;
+		Time.timeScale *= PowerUpController.SlowmoFactor;
 
 		Debug.Log("Slowmo is in effect.");
 
 		// Pause routine execution here for ShieldEnableTime seconds.
-		yield return new WaitForSeconds(PowerUpController.SlowMoEnableTime);
+		yield return new WaitForSeconds(PowerUpController.SlowmoEnableTime);
 
 		// Coroutine resumed: Slow-mo time has expired. Deactivate it.
 		_slowMoActive = false;
