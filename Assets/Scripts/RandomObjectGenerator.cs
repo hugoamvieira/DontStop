@@ -4,7 +4,7 @@
  * for explanation on how to randomly pick one item of the array with weights!
  */
 
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RandomObjectGenerator : MonoBehaviour
@@ -13,17 +13,22 @@ public class RandomObjectGenerator : MonoBehaviour
 	public class SpawnableObject
 	{
 		public GameObject gameObj;
-		public float objWeight;
+		public float objWeight; // The weight of the object (in comparison with others)
+		public int spawnChance; // Chance an item has of spawning. This holds x in 1/x chances
 	}
 
-	// Component
+
+	// Components
 	private readonly System.Random _rand = new System.Random();
 	private float _totalSpawnWeight;
 
-	public SpawnableObject[] spawnableList;
-	public int lowerSpawnDistance; // The minimum distance a spawnable can appear in front of the player
-	public int upperSpawnDistance; // The maximum distance a spawnable can appear in front of the player
-	public int spawnChance; // This is the chance an item has of spawning. This holds x in 1/x chances.
+	// Tracks the objects that were already spawned (for destruction purposes). float value is spawn x position.
+	private Queue<KeyValuePair<GameObject, float>> _spawnedObjects;
+
+	public SpawnableObject[] spawnableList; // Tracks the objects that can be spawned
+	public int lowerSpawnDistance; // Minimum distance a spawnable can appear in front of the player
+	public int upperSpawnDistance; // Maximum distance a spawnable can appear in front of the player
+	public float objExpirationDistance; // Minimum elapsed distance at which the object will be automatically destroyed
 
 
 	// Updates when user messes in inspector and once at runtime
@@ -38,18 +43,22 @@ public class RandomObjectGenerator : MonoBehaviour
 	void Awake()
 	{
 		OnValidate();
+		_spawnedObjects = new Queue<KeyValuePair<GameObject, float>>();
 	}
 
 
 	void FixedUpdate()
 	{
 		RandomlyInstantiateObject();
+		DestroyObjectsOnDistanceExpired();
 	}
 
 
-	public void RandomlyInstantiateObject()
+	// This function picks an object from the array of spawnable objects based on its weight and spawns it
+	// with "spawnChance" of spawning.
+	private void RandomlyInstantiateObject()
 	{
-		// Choose which object will be spawned from array based on DMGregory's weights explanation
+		// Choose which object will be spawned from array
 		float pick = Random.value * _totalSpawnWeight;
 		int index = 0;
 		float cumulativeWeight = spawnableList[0].objWeight;
@@ -63,8 +72,7 @@ public class RandomObjectGenerator : MonoBehaviour
 		// Get the chosen object (for better code readability below)
 		SpawnableObject chosenObj = spawnableList[index];
 
-		// TODO: Spawn Chance
-		if (_rand.Next(1, spawnChance + 1) == spawnChance)
+		if (_rand.Next(1, chosenObj.spawnChance + 1) == chosenObj.spawnChance)
 		{
 			// Generate object position in X axis
 			var randXPos = _rand.Next(lowerSpawnDistance, upperSpawnDistance);
@@ -83,7 +91,34 @@ public class RandomObjectGenerator : MonoBehaviour
 			chosenObj.gameObj.transform.position = generatedObjectPosition;
 
 			// Instantiate object as a child of RandomlyGeneratedSet
-			Instantiate(chosenObj.gameObj).transform.SetParent(GameObject.Find("RandomlyGeneratedSet").transform);
+			GameObject sceneObject = Instantiate(chosenObj.gameObj);
+			sceneObject.transform.SetParent(GameObject.Find("RandomlyGeneratedSet").transform);
+
+			// Push the instantiated object and its X-axis position to the queue
+			_spawnedObjects.Enqueue(new KeyValuePair<GameObject, float>(sceneObject, objXPos));
 		}
+	}
+
+
+	// This function polls the player X-axis position every frame and determines if the first created object
+	// is elligible to be destroyed from the scene
+	private void DestroyObjectsOnDistanceExpired()
+	{
+		// Check if any object exists in the Queue
+		if (_spawnedObjects.Count == 0) return;
+
+		// Get the oldest object from the stack (which is the first, since we're working with FIFO)
+		var oldestObj = _spawnedObjects.Peek();
+
+		// Remove it from stack if it has already been destroyed
+		if (oldestObj.Key == null)
+			_spawnedObjects.Dequeue();
+
+		// Check player - object absolute distance against objExpirationDistance
+		if (!(Mathf.Abs(PlayerController.PosX) - Mathf.Abs(oldestObj.Value) > objExpirationDistance)) return;
+
+		// Destroy object and remove it from queue
+		DestroyObject(oldestObj.Key);
+		_spawnedObjects.Dequeue();
 	}
 }

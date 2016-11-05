@@ -34,7 +34,8 @@ public class PlayerController : MonoBehaviour
 	private bool _slowMoActive;
 	public static bool ShieldActive { get; private set; } // Getter for shieldEnableTime active player property
 
-	// Power-ups environment
+	// Power-ups' variables (Because otherwise you would only be able to set these on the powerups which are generated
+	// at runtime)
 	public float shieldEnableTime;
 	public float slowmoEnableTime;
 	public float slowmoFactor;

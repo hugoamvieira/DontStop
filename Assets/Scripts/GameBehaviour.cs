@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class GameBehaviour : MonoBehaviour
 {
@@ -11,7 +10,7 @@ public class GameBehaviour : MonoBehaviour
 
 	void Awake()
 	{
-		// Set FPS
+		// Set game FPS
 		Application.targetFrameRate = 60;
 	}
 
@@ -21,8 +20,13 @@ public class GameBehaviour : MonoBehaviour
 	}
 
 
-	// FPS Counter
 	void Update()
+	{
+		// UpdateFPS();
+	}
+
+
+	private void UpdateFPS()
 	{
 		if (_timeCounter < RefreshTime)
 		{
@@ -37,6 +41,6 @@ public class GameBehaviour : MonoBehaviour
 			_timeCounter = 0.0f;
 		}
 
-		// Debug.Log("GameBehaviour: FPS = " + _lastFramerate);
+		Debug.Log("GameBehaviour: FPS = " + _lastFramerate);
 	}
 }

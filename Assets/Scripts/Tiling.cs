@@ -9,12 +9,9 @@ public class Tiling : MonoBehaviour
 	private Transform _objTransform;
 	private Camera _camera;
 
-	private bool hasRightSprite; // Used to check if it's needed to instantiate things
+	private bool _hasRightSprite; // Used to check if it's needed to instantiate things
 	private float _spriteWidth; // Element width
 	private const int OffsetX = 2; // Offset to prevent wrong clipping
-
-
-	private Stack<Transform> _tileStack; // Object Pulling Stack
 
 
 	void Awake()
@@ -36,7 +33,7 @@ public class Tiling : MonoBehaviour
 	void FixedUpdate()
 	{
 		// Does it need new sprites? If not, no action is needed
-		if (hasRightSprite == false)
+		if (_hasRightSprite == false)
 		{
 			// Calculate the camera's extent which is half the width of what the camera can see.
 			float camHorizontalExtent = _camera.orthographicSize * Screen.width / Screen.height;
@@ -45,10 +42,10 @@ public class Tiling : MonoBehaviour
 			float edgeVisiblePosRight = (_objTransform.position.x + (_spriteWidth / 2)) - camHorizontalExtent;
 
 			// Check if camera can see the sprite edge
-			if (_camera.transform.position.x >= edgeVisiblePosRight - OffsetX && hasRightSprite == false)
+			if (_camera.transform.position.x >= edgeVisiblePosRight - OffsetX && _hasRightSprite == false)
 			{
 				InstantiateSprite();
-				hasRightSprite = true;
+				_hasRightSprite = true;
 			}
 		}
 	}

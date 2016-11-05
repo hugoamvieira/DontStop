@@ -18,4 +18,7 @@ public class ShieldController : MonoBehaviour
 		// If the player picks the shieldEnableTime power up, then the it starts showing
 		_shieldSr.enabled = PlayerController.ShieldActive;
 	}
+
+
+	// TODO: Check shield collision
 }
