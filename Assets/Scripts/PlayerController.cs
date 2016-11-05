@@ -141,17 +141,28 @@ public class PlayerController : MonoBehaviour
 
 		// Set slow mo as true and factor in the SlowMoFactoring to the game timeScale
 		_slowMoActive = true;
-		Time.timeScale *= PowerUpController.SlowmoFactor;
 
-		Debug.Log("Slowmo is in effect.");
+		// Smooth transition to slow mo
+		for (float factor = Time.timeScale; factor >= PowerUpController.SlowmoFactor; factor -= 0.1f)
+			Time.timeScale = factor;
+
+		// Since the for loop could never equal the var number
+		Time.timeScale = PowerUpController.SlowmoFactor;
+		Debug.Log("Slowmo is in effect. " + Time.timeScale);
 
 		// Pause routine execution here for ShieldEnableTime seconds.
 		yield return new WaitForSeconds(PowerUpController.SlowmoEnableTime);
 
 		// Coroutine resumed: Slow-mo time has expired. Deactivate it.
 		_slowMoActive = false;
-		Time.timeScale = 1;
-		Debug.Log("Slowmo disabled.");
+
+		// Smooth transition to slow mo
+		for (float factor = PowerUpController.SlowmoFactor; factor <= 1f; factor += 0.1f)
+			Time.timeScale = factor;
+
+		// Since the for loop could never equal the var number
+		Time.timeScale = 1f;
+		Debug.Log("Slowmo disabled. " + Time.timeScale);
 
 		yield return null;
 	}
