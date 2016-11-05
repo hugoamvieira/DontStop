@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
 	public static bool CollidedShieldPowerup { get; set; }
 	public static bool CollidedSlowmoPowerup { get; set; }
 	private float _distanceElapsed;
-	private bool _slowMoActive;
+	public static bool SlowmoActive { get; private set; }
 	public static bool ShieldActive { get; private set; } // Getter for shieldEnableTime active player property
 
 	// Power-ups' variables (Because otherwise you would only be able to set these on the powerups which are generated
@@ -137,10 +137,10 @@ public class PlayerController : MonoBehaviour
 	// This state lasts SlowMoEnableTime seconds.
 	private IEnumerator ActivatePlayerSlowmo()
 	{
-		if (_slowMoActive) yield break;
+		if (SlowmoActive) yield break;
 
 		// Set slow mo as true and factor in the SlowMoFactoring to the game timeScale
-		_slowMoActive = true;
+		SlowmoActive = true;
 
 		// Smooth transition to slow mo
 		for (float factor = Time.timeScale; factor >= PowerUpController.SlowmoFactor; factor -= 0.1f)
@@ -154,7 +154,7 @@ public class PlayerController : MonoBehaviour
 		yield return new WaitForSeconds(PowerUpController.SlowmoEnableTime);
 
 		// Coroutine resumed: Slow-mo time has expired. Deactivate it.
-		_slowMoActive = false;
+		SlowmoActive = false;
 
 		// Smooth transition to slow mo
 		for (float factor = PowerUpController.SlowmoFactor; factor <= 1f; factor += 0.1f)

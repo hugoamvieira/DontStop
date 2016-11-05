@@ -101,7 +101,9 @@ public class RandomObjectGenerator : MonoBehaviour
 
 
 	// This function polls the player X-axis position every frame and determines if the first created object
-	// is elligible to be destroyed from the scene
+	// is elligible to be destroyed from the scene.
+	// Bug: Should not be using Abs. Should be checking if difference is negative (which means the player already passed the object.
+	// Bug: (cont) the way it is right now, if the object spawns 60 units from the player, it will despawn before the player gets to it.
 	private void DestroyObjectsOnDistanceExpired()
 	{
 		// Check if any object exists in the Queue
