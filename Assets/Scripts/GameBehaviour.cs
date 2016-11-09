@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameBehaviour : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class GameBehaviour : MonoBehaviour
 	{
 		// Set game FPS
 		Application.targetFrameRate = 60;
+
+		// Set timeScale as 1 (For restarting purposes)
+		Time.timeScale = 1f;
 	}
 
 
@@ -23,6 +27,15 @@ public class GameBehaviour : MonoBehaviour
 	void Update()
 	{
 		// UpdateFPS();
+		if (PlayerController.GameOver)
+			EndGame();
+	}
+
+
+	private void EndGame()
+	{
+		Time.timeScale = 0f;
+		GUIController.ToggleGameOverMenu();
 	}
 
 

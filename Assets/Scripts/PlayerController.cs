@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 	public float maxSpeedX;
 	public float maxSpeedY;
 
-	// Flags (These are set through the animations)
+	// Flags
 	public bool isJumping;
 	public bool isCrouching;
 
@@ -30,9 +30,10 @@ public class PlayerController : MonoBehaviour
 	public static float PosY { get; private set; }
 	public static bool CollidedShieldPowerup { get; set; }
 	public static bool CollidedSlowmoPowerup { get; set; }
-	private float _distanceElapsed;
 	public static bool SlowmoActive { get; private set; }
 	public static bool ShieldActive { get; private set; } // Getter for shieldEnableTime active player property
+	public static bool GameOver { get; private set; } // Determines whether game is over or not
+	public static float DistanceElapsed { get; private set; }
 
 	// Power-ups' variables (Because otherwise you would only be able to set these on the powerups which are generated
 	// at runtime)
@@ -55,11 +56,18 @@ public class PlayerController : MonoBehaviour
 		PowerUpController.ShieldEnableTime = shieldEnableTime;
 		PowerUpController.SlowmoEnableTime = slowmoEnableTime;
 		PowerUpController.SlowmoFactor = slowmoFactor;
+
+		// Playable state
+		GameOver = false;
 	}
 
 
 	void FixedUpdate()
 	{
+		// Update Position
+		if (gameObject.transform.position.x > 0)
+			DistanceElapsed = Mathf.Abs(gameObject.transform.position.x);
+
 		// Set/Update player X position
 		PosX = transform.position.x;
 
@@ -102,11 +110,38 @@ public class PlayerController : MonoBehaviour
 		// Check collision with power ups
 		if (CollidedShieldPowerup)
 		{
-			StartCoroutine(ActivatePlayerShield());
+			StartCoroutine("ActivatePlayerShield");
 		}
 		else if (CollidedSlowmoPowerup)
 		{
-			StartCoroutine(ActivatePlayerSlowmo());
+			StartCoroutine("ActivatePlayerSlowmo");
+		}
+	}
+
+
+	void OnCollisionEnter2D(Collision2D collisionObject)
+	{
+		// Ignore collision if the player didn't collide with an obstacle
+		if (!collisionObject.gameObject.name.Contains("Obstacle")) return;
+
+		Debug.Log("Collision detected with obstacle");
+
+		if (!ShieldActive)
+			GameOver = true;
+
+		else
+		{
+			DeactivatePlayerShield();
+
+			var newPlayerPosX = collisionObject.transform.position.x +
+			                    collisionObject.gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x + 0.2f;
+			var playerPosY = gameObject.transform.position.y;
+
+			// Reset speed
+			_playerRigidbody.velocity = new Vector2(0, 0);
+
+			// Spawn the player on the other side of the box
+			gameObject.transform.position = new Vector3(newPlayerPosX, playerPosY, 0);
 		}
 	}
 
@@ -116,8 +151,6 @@ public class PlayerController : MonoBehaviour
 	private IEnumerator ActivatePlayerShield()
 	{
 		if (ShieldActive) yield break;
-
-		// TODO: Check if object collision here and destroy shieldEnableTime upon that.
 		ShieldActive = true;
 
 		Debug.Log("Shield is in effect");
@@ -126,8 +159,7 @@ public class PlayerController : MonoBehaviour
 		yield return new WaitForSeconds(PowerUpController.ShieldEnableTime);
 
 		// Coroutine resumed: Shield time has expired. Deactivate it.
-		ShieldActive = false;
-		Debug.Log("Shield deactivated.");
+		DeactivatePlayerShield();
 
 		yield return null;
 	}
@@ -165,5 +197,17 @@ public class PlayerController : MonoBehaviour
 		Debug.Log("Slowmo disabled. " + Time.timeScale);
 
 		yield return null;
+	}
+
+
+	// Deactivates shield by stopping the coroutine and setting the shield flag as false
+	// This function is used to premmaturely cancel the shield (object collision event)
+	private void DeactivatePlayerShield()
+	{
+		// Stop Shield Routine
+		StopCoroutine("ActivatePlayerShield");
+		ShieldActive = false;
+
+		Debug.Log("Shield deactivated.");
 	}
 }
