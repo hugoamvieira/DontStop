@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 	// Components
 	private Animator _anim;
 	private Rigidbody2D _playerRigidbody;
+	private SpriteRenderer _playerSr;
 
 	// Anim states
 	private const string AnimParamName = "AnimState";
@@ -24,6 +25,8 @@ public class PlayerController : MonoBehaviour
 	// Flags
 	public bool isJumping;
 	public bool isCrouching;
+	public int respawnTimer;
+	public float respawnTransparency;
 
 	// Player Environment
 	public static float PosX { get; private set; }
@@ -47,6 +50,7 @@ public class PlayerController : MonoBehaviour
 		// Get Components
 		_anim = gameObject.GetComponent<Animator>();
 		_playerRigidbody = gameObject.GetComponent<Rigidbody2D>();
+		_playerSr = gameObject.GetComponent<SpriteRenderer>();
 
 		// Set player Y Position. It's here because I only need this property for the power ups
 		// If it was on the Update method, power ups would spawn in the air whenever the player jumped.
@@ -142,7 +146,20 @@ public class PlayerController : MonoBehaviour
 
 			// Spawn the player on the other side of the box
 			gameObject.transform.position = new Vector3(newPlayerPosX, playerPosY, 0);
+
+			// Give that respawn effect
+			StartCoroutine("RespawnPlayer");
 		}
+	}
+
+
+	// Gives that cool respawn effect by switching the transparency on the player
+	private IEnumerator RespawnPlayer()
+	{
+		_playerSr.color = new Color(_playerSr.color.r, _playerSr.color.g, _playerSr.color.b, respawnTransparency);
+		yield return new WaitForSeconds(respawnTimer);
+
+		_playerSr.color = new Color(_playerSr.color.r, _playerSr.color.g, _playerSr.color.b, 1);
 	}
 
 
