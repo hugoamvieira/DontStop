@@ -37,12 +37,19 @@ public class PlayerController : MonoBehaviour
 	public static bool ShieldActive { get; private set; } // Getter for shieldEnableTime active player property
 	public static bool GameOver { get; private set; } // Determines whether game is over or not
 	public static float DistanceElapsed { get; private set; }
+	public static int PlayerScore { get; private set; }
 
-	// Power-ups' variables (Because otherwise you would only be able to set these on the powerups which are generated
+	// Power-ups' / Score variables (Because otherwise you would only be able to set these on the powerups which are generated
 	// at runtime)
+	private int _score;
+	private float _collisionDecel;
 	public float shieldEnableTime;
 	public float slowmoEnableTime;
 	public float slowmoFactor;
+
+	// Player Colliders
+	[SerializeField] private PolygonCollider2D[] _playerColliders;
+	[SerializeField] private int _currentColliderIndex;
 
 
 	void Awake()
@@ -63,6 +70,12 @@ public class PlayerController : MonoBehaviour
 
 		// Playable state
 		GameOver = false;
+
+		// Set score for each successful jump / crouch
+		_score = 100;
+
+		// Collision deceleration
+		_collisionDecel = -2f;
 	}
 
 
@@ -128,8 +141,6 @@ public class PlayerController : MonoBehaviour
 		// Ignore collision if the player didn't collide with an obstacle
 		if (!collisionObject.gameObject.name.Contains("Obstacle")) return;
 
-		Debug.Log("Collision detected with obstacle");
-
 		if (!ShieldActive)
 			GameOver = true;
 
@@ -141,8 +152,8 @@ public class PlayerController : MonoBehaviour
 			                    collisionObject.gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x + 0.2f;
 			var playerPosY = gameObject.transform.position.y;
 
-			// Reset speed
-			_playerRigidbody.velocity = new Vector2(0, 0);
+			// Slow player speed down
+			_playerRigidbody.AddForce(new Vector2(_collisionDecel, 0));
 
 			// Spawn the player on the other side of the box
 			gameObject.transform.position = new Vector3(newPlayerPosX, playerPosY, 0);
@@ -150,6 +161,23 @@ public class PlayerController : MonoBehaviour
 			// Give that respawn effect
 			StartCoroutine("RespawnPlayer");
 		}
+	}
+
+
+	void OnTriggerEnter2D(Collider2D triggerObject)
+	{
+		if (!triggerObject.gameObject.name.Contains("Obstacle")) return;
+
+		PlayerScore += _score;
+	}
+
+
+	// Changes colliders based on animation
+	public void SetSpriteCollider(int spriteFrame)
+	{
+		_playerColliders[_currentColliderIndex].enabled = false;
+		_currentColliderIndex = spriteFrame;
+		_playerColliders[_currentColliderIndex].enabled = true;
 	}
 
 
