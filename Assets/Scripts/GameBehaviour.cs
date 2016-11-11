@@ -8,6 +8,8 @@ public class GameBehaviour : MonoBehaviour
 	private float _lastFramerate;
 	private const float RefreshTime = 0.5f;
 
+	// Number of levels
+	public static int NumberOfLevels { get; private set; }
 
 	void Awake()
 	{
@@ -16,11 +18,9 @@ public class GameBehaviour : MonoBehaviour
 
 		// Set timeScale as 1 (For restarting purposes)
 		Time.timeScale = 1f;
-	}
 
-
-	void Start()
-	{
+		// Set number of existing levels
+		NumberOfLevels = 5;
 	}
 
 
@@ -36,6 +36,12 @@ public class GameBehaviour : MonoBehaviour
 	{
 		Time.timeScale = 0f;
 		GUIController.ToggleGameOverMenu();
+	}
+
+
+	public void LoadLevel(string levelName)
+	{
+		SceneManager.LoadScene(levelName);
 	}
 
 
