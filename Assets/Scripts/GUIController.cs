@@ -48,6 +48,7 @@ public class GUIController : MonoBehaviour
 
 	public static void ToggleGameOverMenu()
 	{
+		if (_gameOverPanel == null) return;
 		_gameOverPanel.SetActive(true);
 	}
 
