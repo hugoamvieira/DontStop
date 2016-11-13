@@ -7,12 +7,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Bug: Spawn doesn't verify if tiling has happened at the position it's going to spawn the object
+// Bug: (cont) so sometimes objects spawn and fall off the map because there's no tile yet
 public class RandomObjectGenerator : MonoBehaviour
 {
 	[System.Serializable]
 	public class SpawnableObject
 	{
 		public GameObject gameObj;
+		public float gameYPos; // The Y pos at which the object spawns (for non rigidbody components)
 		public float objWeight; // The weight of the object (in comparison with others)
 		public int spawnChance; // Chance an item has of spawning. This holds x in 1/x chances
 	}
@@ -77,15 +80,14 @@ public class RandomObjectGenerator : MonoBehaviour
 			// Generate object position in X axis
 			var randXPos = _rand.Next(lowerSpawnDistance, upperSpawnDistance);
 
-			// Get player X and Y positions
+			// Get player X-axis position
 			var playerXPos = PlayerController.PosX;
-			var playerYPos = PlayerController.PosY;
 
 			// Add that random value to the player position
 			var objXPos = randXPos + playerXPos;
 
 			// Create a vector with the position
-			Vector3 generatedObjectPosition = new Vector3(objXPos, playerYPos);
+			Vector3 generatedObjectPosition = new Vector3(objXPos, chosenObj.gameYPos);
 
 			// Set object position
 			chosenObj.gameObj.transform.position = generatedObjectPosition;
