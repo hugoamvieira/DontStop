@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+	#region VARIABLES
+
 	// Components
 	private Animator _anim;
 	private Rigidbody2D _playerRigidbody;
@@ -29,15 +31,77 @@ public class PlayerController : MonoBehaviour
 	public float respawnTransparency;
 
 	// Player Environment
-	public static float PosX { get; private set; }
-	public static float PosY { get; private set; }
-	public static bool CollidedShieldPowerup { get; set; }
-	public static bool CollidedSlowmoPowerup { get; set; }
-	public static bool SlowmoActive { get; private set; }
-	public static bool ShieldActive { get; private set; } // Getter for shieldEnableTime active player property
-	public static bool GameOver { get; private set; } // Determines whether game is over or not
-	public static float DistanceElapsed { get; private set; }
-	public static int PlayerScore { get; private set; }
+	private static float _posX;
+
+	public static float PosX
+	{
+		get { return _posX; }
+		set { _posX = value; }
+	}
+
+	private static float _posY;
+
+	public static float PosY
+	{
+		get { return _posY; }
+		set { _posY = value; }
+	}
+
+	private static bool _collidedShieldPowerup;
+
+	public static bool CollidedShieldPowerup
+	{
+		get { return _collidedShieldPowerup; }
+		set { _collidedShieldPowerup = value; }
+	}
+
+	private static bool _collidedSlowmoPowerup;
+
+	public static bool CollidedSlowmoPowerup
+	{
+		get { return _collidedSlowmoPowerup; }
+		set { _collidedSlowmoPowerup = value; }
+	}
+
+	private static bool _slowmoActive;
+
+	public static bool SlowmoActive
+	{
+		get { return _slowmoActive; }
+		set { _slowmoActive = value; }
+	}
+
+	private static bool _shieldActive; // Getter for shieldEnableTime active player property
+
+	public static bool ShieldActive
+	{
+		get { return _shieldActive; }
+		set { _shieldActive = value; }
+	}
+
+	private static bool _gameOver; // Determines whether game is over or not
+
+	public static bool GameOver
+	{
+		get { return _gameOver; }
+		set { _gameOver = value; }
+	}
+
+	private static float _distanceElapsed;
+
+	public static float DistanceElapsed
+	{
+		get { return _distanceElapsed; }
+		set { _distanceElapsed = value; }
+	}
+
+	private static int _playerScore;
+
+	public static int PlayerScore
+	{
+		get { return _playerScore; }
+		private set { _playerScore = value; }
+	}
 
 	// Power-ups' / Score variables (Because otherwise you would only be able to set these on the powerups which are generated
 	// at runtime)
@@ -51,6 +115,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private PolygonCollider2D[] _playerColliders;
 	[SerializeField] private int _currentColliderIndex;
 
+	#endregion
 
 	void Awake()
 	{
@@ -62,6 +127,9 @@ public class PlayerController : MonoBehaviour
 		// Set player Y Position. It's here because I only need this property for the power ups
 		// If it was on the Update method, power ups would spawn in the air whenever the player jumped.
 		PosY = transform.position.y;
+
+		// Set score
+		PlayerScore = 0;
 
 		// Set the power-ups properties (didn't want to make classes for each ¯\_(ツ)_/¯)
 		PowerUpController.ShieldEnableTime = shieldEnableTime;
@@ -150,13 +218,12 @@ public class PlayerController : MonoBehaviour
 
 			var newPlayerPosX = collisionObject.transform.position.x +
 			                    collisionObject.gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x + 0.2f;
-			var playerPosY = gameObject.transform.position.y;
 
 			// Slow player speed down
 			_playerRigidbody.AddForce(new Vector2(_collisionDecel, 0));
 
 			// Spawn the player on the other side of the box
-			gameObject.transform.position = new Vector3(newPlayerPosX, playerPosY, 0);
+			gameObject.transform.position = new Vector3(newPlayerPosX, PosY, 0);
 
 			// Give that respawn effect
 			StartCoroutine("RespawnPlayer");
@@ -167,7 +234,6 @@ public class PlayerController : MonoBehaviour
 	void OnTriggerEnter2D(Collider2D triggerObject)
 	{
 		if (!triggerObject.gameObject.name.Contains("Obstacle")) return;
-
 		PlayerScore += _score;
 	}
 
@@ -215,8 +281,6 @@ public class PlayerController : MonoBehaviour
 	private IEnumerator ActivatePlayerSlowmo()
 	{
 		if (SlowmoActive) yield break;
-
-		// Set slow mo as true and factor in the SlowMoFactoring to the game timeScale
 		SlowmoActive = true;
 
 		// Smooth transition to slow mo
