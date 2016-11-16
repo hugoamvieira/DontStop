@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 	private Animator _anim;
 	private Rigidbody2D _playerRigidbody;
 	private SpriteRenderer _playerSr;
+	private AudioSource _playerAudio;
 
 	// Anim states
 	private const string AnimParamName = "AnimState";
@@ -111,6 +112,10 @@ public class PlayerController : MonoBehaviour
 	public float slowmoEnableTime;
 	public float slowmoFactor;
 
+	// Counters for jump and crouch soundfx
+	private bool _jumpFXPlayed;
+	private bool _crouchFXPlayed;
+
 	// Player Colliders
 	[SerializeField] private PolygonCollider2D[] _playerColliders;
 	[SerializeField] private int _currentColliderIndex;
@@ -123,6 +128,7 @@ public class PlayerController : MonoBehaviour
 		_anim = gameObject.GetComponent<Animator>();
 		_playerRigidbody = gameObject.GetComponent<Rigidbody2D>();
 		_playerSr = gameObject.GetComponent<SpriteRenderer>();
+		_playerAudio = gameObject.GetComponent<AudioSource>();
 
 		// Set player Y Position. It's here because I only need this property for the power ups
 		// If it was on the Update method, power ups would spawn in the air whenever the player jumped.
@@ -130,6 +136,10 @@ public class PlayerController : MonoBehaviour
 
 		// Set score
 		PlayerScore = 0;
+
+		// Reset FX played counters
+		_jumpFXPlayed = false;
+		_crouchFXPlayed = false;
 
 		// Set the power-ups properties (didn't want to make classes for each ¯\_(ツ)_/¯)
 		PowerUpController.ShieldEnableTime = shieldEnableTime;
@@ -175,6 +185,12 @@ public class PlayerController : MonoBehaviour
 				// Change to jump animation and add jumping force
 				_anim.SetInteger(AnimParamName, JumpAnimState);
 				_playerRigidbody.AddForce(new Vector2(0, jumpForce));
+
+				if (_jumpFXPlayed) return;
+				_playerAudio.clip = Resources.Load("SoundFX/Jump") as AudioClip;
+				_playerAudio.volume = 0.2f;
+				_playerAudio.Play();
+				_jumpFXPlayed = true;
 			}
 		}
 
@@ -184,6 +200,12 @@ public class PlayerController : MonoBehaviour
 
 			// Change to crouch animation
 			_anim.SetInteger(AnimParamName, CrouchAnimState);
+
+			if (_crouchFXPlayed) return;
+			_playerAudio.clip = Resources.Load("SoundFX/Crouch") as AudioClip;
+			_playerAudio.volume = 0.2f;
+			_playerAudio.Play();
+			_crouchFXPlayed = true;
 		}
 
 		else
@@ -201,6 +223,10 @@ public class PlayerController : MonoBehaviour
 		{
 			StartCoroutine("ActivatePlayerSlowmo");
 		}
+
+		// Reset the FX variables for the next frame
+		_jumpFXPlayed = false;
+		_crouchFXPlayed = false;
 	}
 
 
