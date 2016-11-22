@@ -13,9 +13,8 @@ public class GUIController : MonoBehaviour
 
 	private PlayerController _playerRef;
 
-	public const string mainMenuSceneName = "MainMenu";
-	public static bool paused { get; private set; }
-	public float distanceMultiplier;
+	public const string MainMenuSceneName = "MainMenu";
+	public static bool Paused { get; private set; }
 
 
 	void Awake()
@@ -38,8 +37,7 @@ public class GUIController : MonoBehaviour
 	void FixedUpdate()
 	{
 		// Set the distance with a distance multiplier so it isn't so high
-		var distance = _playerRef.DistanceElapsed * distanceMultiplier;
-		_guiDistanceText.text = distance.ToString("0.00m");
+		_guiDistanceText.text = _playerRef.DistanceElapsed.ToString("0.00m");
 
 		// Set the score
 		_scoreText.text = _playerRef.PlayerScore.ToString();
@@ -59,8 +57,8 @@ public class GUIController : MonoBehaviour
 
 	public void TogglePauseMenu()
 	{
-		paused = !paused;
-		if (paused)
+		Paused = !Paused;
+		if (Paused)
 		{
 			Time.timeScale = 0f;
 			_overlayPanel.SetActive(true);
@@ -82,6 +80,6 @@ public class GUIController : MonoBehaviour
 
 	public void ExitToMenu()
 	{
-		SceneManager.LoadScene(mainMenuSceneName);
+		SceneManager.LoadScene(MainMenuSceneName);
 	}
 }

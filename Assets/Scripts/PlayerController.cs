@@ -107,6 +107,7 @@ public class PlayerController : MonoBehaviour
 	// Power-ups' / Score variables (Because otherwise you would only be able to set these on the powerups which are generated
 	// at runtime)
 	private int _score;
+	private float _distanceMultiplier;
 	private float _collisionDecel;
 	public float ShieldEnableTime;
 	public float SlowmoEnableTime;
@@ -151,6 +152,7 @@ public class PlayerController : MonoBehaviour
 
 		// Set score for each successful jump / crouch
 		_score = 100;
+		_distanceMultiplier = 0.5f;
 
 		// Collision deceleration
 		_collisionDecel = -2f;
@@ -161,7 +163,7 @@ public class PlayerController : MonoBehaviour
 	{
 		// Update Position
 		if (gameObject.transform.position.x > 0)
-			DistanceElapsed = Mathf.Abs(gameObject.transform.position.x);
+			DistanceElapsed = Mathf.Abs(gameObject.transform.position.x) * _distanceMultiplier;
 
 		// Set/Update player X position
 		PosX = transform.position.x;
