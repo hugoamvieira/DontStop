@@ -18,87 +18,87 @@ public class PlayerController : MonoBehaviour
 	private const int CrouchAnimState = 3;
 
 	// Forces
-	public float walkForce;
-	public float jumpForce;
+	public float WalkForce;
+	public float JumpForce;
 
 	// Max speeds
-	public float maxSpeedX;
-	public float maxSpeedY;
+	public float MaxSpeedX;
+	public float MaxSpeedY;
 
 	// Flags
-	public bool isJumping;
-	public bool isCrouching;
-	public int respawnTimer;
-	public float respawnTransparency;
+	public bool IsJumping;
+	public bool IsCrouching;
+	public int RespawnTimer;
+	public float RespawnTransparency;
 
 	// Player Environment
-	private static float _posX;
+	private float _posX;
 
-	public static float PosX
+	public float PosX
 	{
 		get { return _posX; }
 		set { _posX = value; }
 	}
 
-	private static float _posY;
+	private float _posY;
 
-	public static float PosY
+	public float PosY
 	{
 		get { return _posY; }
 		set { _posY = value; }
 	}
 
-	private static bool _collidedShieldPowerup;
+	private bool _collidedShieldPowerup;
 
-	public static bool CollidedShieldPowerup
+	public bool CollidedShieldPowerup
 	{
 		get { return _collidedShieldPowerup; }
 		set { _collidedShieldPowerup = value; }
 	}
 
-	private static bool _collidedSlowmoPowerup;
+	private bool _collidedSlowmoPowerup;
 
-	public static bool CollidedSlowmoPowerup
+	public bool CollidedSlowmoPowerup
 	{
 		get { return _collidedSlowmoPowerup; }
 		set { _collidedSlowmoPowerup = value; }
 	}
 
-	private static bool _slowmoActive;
+	private bool _slowmoActive;
 
-	public static bool SlowmoActive
+	public bool SlowmoActive
 	{
 		get { return _slowmoActive; }
 		set { _slowmoActive = value; }
 	}
 
-	private static bool _shieldActive; // Getter for shieldEnableTime active player property
+	private bool _shieldActive; // Getter for ShieldEnableTime active player property
 
-	public static bool ShieldActive
+	public bool ShieldActive
 	{
 		get { return _shieldActive; }
 		set { _shieldActive = value; }
 	}
 
-	private static bool _gameOver; // Determines whether game is over or not
+	private bool _gameOver; // Determines whether game is over or not
 
-	public static bool GameOver
+	public bool GameOver
 	{
 		get { return _gameOver; }
 		set { _gameOver = value; }
 	}
 
-	private static float _distanceElapsed;
+	private float _distanceElapsed;
 
-	public static float DistanceElapsed
+	public float DistanceElapsed
 	{
 		get { return _distanceElapsed; }
 		set { _distanceElapsed = value; }
 	}
 
-	private static int _playerScore;
+	private int _playerScore;
 
-	public static int PlayerScore
+	public int PlayerScore
 	{
 		get { return _playerScore; }
 		private set { _playerScore = value; }
@@ -108,9 +108,9 @@ public class PlayerController : MonoBehaviour
 	// at runtime)
 	private int _score;
 	private float _collisionDecel;
-	public float shieldEnableTime;
-	public float slowmoEnableTime;
-	public float slowmoFactor;
+	public float ShieldEnableTime;
+	public float SlowmoEnableTime;
+	public float SlowmoFactor;
 
 	// Counters for jump and crouch soundfx
 	private bool _jumpFXPlayed;
@@ -142,9 +142,9 @@ public class PlayerController : MonoBehaviour
 		_crouchFXPlayed = false;
 
 		// Set the power-ups properties (didn't want to make classes for each ¯\_(ツ)_/¯)
-		PowerUpController.ShieldEnableTime = shieldEnableTime;
-		PowerUpController.SlowmoEnableTime = slowmoEnableTime;
-		PowerUpController.SlowmoFactor = slowmoFactor;
+		PowerUpController.ShieldEnableTime = ShieldEnableTime;
+		PowerUpController.SlowmoEnableTime = SlowmoEnableTime;
+		PowerUpController.SlowmoFactor = SlowmoFactor;
 
 		// Playable state
 		GameOver = false;
@@ -167,24 +167,24 @@ public class PlayerController : MonoBehaviour
 		PosX = transform.position.x;
 
 		// Engage endless running mode
-		if (_playerRigidbody.velocity.x <= maxSpeedX)
+		if (_playerRigidbody.velocity.x <= MaxSpeedX)
 		{
-			_playerRigidbody.AddForce(new Vector2(walkForce, 0));
+			_playerRigidbody.AddForce(new Vector2(WalkForce, 0));
 		}
 
 
 		// Handle user input
 		if (Input.GetKey(KeyCode.Space) || TouchController.SwipedUp())
 		{
-			if (isCrouching) return;
+			if (IsCrouching) return;
 
 			// If the player's Y-axis speed doesn't exceed the set max Y speed
 			// and if the player is on the ground (ie. Y-axis velocity == 0):
-			if (_playerRigidbody.velocity.y <= maxSpeedY && _playerRigidbody.velocity.y == 0f)
+			if (_playerRigidbody.velocity.y <= MaxSpeedY && _playerRigidbody.velocity.y == 0f)
 			{
 				// Change to jump animation and add jumping force
 				_anim.SetInteger(AnimParamName, JumpAnimState);
-				_playerRigidbody.AddForce(new Vector2(0, jumpForce));
+				_playerRigidbody.AddForce(new Vector2(0, JumpForce));
 
 				if (_jumpFXPlayed) return;
 				_playerAudio.clip = Resources.Load("SoundFX/Jump") as AudioClip;
@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour
 
 		else if (Input.GetKey(KeyCode.S) || TouchController.SwipedDown())
 		{
-			if (isJumping) return;
+			if (IsJumping) return;
 
 			// Change to crouch animation
 			_anim.SetInteger(AnimParamName, CrouchAnimState);
@@ -276,14 +276,14 @@ public class PlayerController : MonoBehaviour
 	// Gives that cool respawn effect by switching the transparency on the player
 	private IEnumerator RespawnPlayer()
 	{
-		_playerSr.color = new Color(_playerSr.color.r, _playerSr.color.g, _playerSr.color.b, respawnTransparency);
-		yield return new WaitForSeconds(respawnTimer);
+		_playerSr.color = new Color(_playerSr.color.r, _playerSr.color.g, _playerSr.color.b, RespawnTransparency);
+		yield return new WaitForSeconds(RespawnTimer);
 
 		_playerSr.color = new Color(_playerSr.color.r, _playerSr.color.g, _playerSr.color.b, 1);
 	}
 
 
-	// This method activates the player shieldEnableTime, in which the player becomes invincible
+	// This method activates the player ShieldEnableTime, in which the player becomes invincible
 	// for ShieldEnableTime seconds or until it collides with an object, whichever comes first.
 	private IEnumerator ActivatePlayerShield()
 	{

@@ -24,6 +24,7 @@ public class RandomObjectGenerator : MonoBehaviour
 	// Components
 	private readonly System.Random _rand = new System.Random();
 	private float _totalSpawnWeight;
+	private PlayerController _playerRef;
 
 	// Tracks the objects that were already spawned (for destruction purposes). float value is spawn x position.
 	private Queue<KeyValuePair<GameObject, float>> _spawnedObjects;
@@ -47,6 +48,7 @@ public class RandomObjectGenerator : MonoBehaviour
 	{
 		OnValidate();
 		_spawnedObjects = new Queue<KeyValuePair<GameObject, float>>();
+		_playerRef = GameObject.Find("Player").gameObject.GetComponent<PlayerController>();
 	}
 
 
@@ -81,7 +83,7 @@ public class RandomObjectGenerator : MonoBehaviour
 			var randXPos = _rand.Next(lowerSpawnDistance, upperSpawnDistance);
 
 			// Get player X-axis position
-			var playerXPos = PlayerController.PosX;
+			var playerXPos = _playerRef.PosX;
 
 			// Add that random value to the player position
 			var objXPos = randXPos + playerXPos;
@@ -119,7 +121,7 @@ public class RandomObjectGenerator : MonoBehaviour
 			_spawnedObjects.Dequeue();
 
 		// Check player - object absolute distance against objExpirationDistance
-		if (!(Mathf.Abs(PlayerController.PosX) - Mathf.Abs(oldestObj.Value) > objExpirationDistance)) return;
+		if (!(Mathf.Abs(_playerRef.PosX) - Mathf.Abs(oldestObj.Value) > objExpirationDistance)) return;
 
 		// Destroy object and remove it from queue
 		DestroyObject(oldestObj.Key);

@@ -6,6 +6,7 @@ public class GameBehaviour : MonoBehaviour
 	private int _frameCounter;
 	private float _timeCounter;
 	private float _lastFramerate;
+	private PlayerController _playerRef;
 	private const float RefreshTime = 0.5f;
 
 	// Number of levels
@@ -15,6 +16,10 @@ public class GameBehaviour : MonoBehaviour
 	{
 		// Set game FPS
 		Application.targetFrameRate = 60;
+
+		// Get player reference
+		if (GameObject.Find("Player") != null)
+			_playerRef = GameObject.Find("Player").GetComponent<PlayerController>();
 
 		// Set timeScale as 1 (For restarting purposes)
 		Time.timeScale = 1f;
@@ -27,15 +32,17 @@ public class GameBehaviour : MonoBehaviour
 	void Update()
 	{
 		// UpdateFPS();
-		if (PlayerController.GameOver)
+		if (_playerRef != null && _playerRef.GameOver)
 			EndGame();
 	}
 
 
 	private void EndGame()
 	{
+		GUIController guiRef = GameObject.Find("Level Manager").gameObject.GetComponent<GUIController>();
+
 		Time.timeScale = 0f;
-		GUIController.ToggleGameOverMenu();
+		guiRef.ToggleGameOverMenu();
 	}
 
 

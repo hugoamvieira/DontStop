@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Runtime.InteropServices;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuGUIHandler : MonoBehaviour
@@ -39,7 +37,7 @@ public class MainMenuGUIHandler : MonoBehaviour
 			b.GetComponentInChildren<Text>().text += i;
 
 			var i2 = i; // No access to i directly due to lambda expression
-			GameBehaviour gb = new GameBehaviour();
+			GameBehaviour gb = GameObject.Find("Level Manager").gameObject.GetComponent<GameBehaviour>();
 			b.GetComponent<Button>().onClick.AddListener(
 				() => gb.LoadLevel("Level" + i2)
 			);

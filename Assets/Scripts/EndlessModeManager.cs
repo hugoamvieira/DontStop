@@ -3,10 +3,12 @@
 public class EndlessModeManager : MonoBehaviour
 {
 	private AudioSource _endlessModeAudio;
+	private PlayerController _playerRef;
 	private bool _gameOverPlaying;
 
 	void Awake()
 	{
+		_playerRef = GameObject.Find("Player").gameObject.GetComponent<PlayerController>();
 		_gameOverPlaying = false;
 
 		// Endless mode audio
@@ -20,7 +22,7 @@ public class EndlessModeManager : MonoBehaviour
 
 	void Update()
 	{
-		if (PlayerController.GameOver && !_gameOverPlaying)
+		if (_playerRef.GameOver && !_gameOverPlaying)
 		{
 			// Play game over music
 			_endlessModeAudio.clip = Resources.Load("Music/GameOver") as AudioClip;
