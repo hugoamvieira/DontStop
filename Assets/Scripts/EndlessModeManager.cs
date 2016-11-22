@@ -11,6 +11,7 @@ public class EndlessModeManager : MonoBehaviour
 	{
 		public float PlayerDistanceTrigger;
 		public float NewMaxVelocityX;
+		public float NewAudioPitch;
 		public bool Active;
 	}
 
@@ -53,7 +54,10 @@ public class EndlessModeManager : MonoBehaviour
 				}
 
 				if (DifficultyLevels[i].Active)
+				{
 					_playerRef.MaxSpeedX = DifficultyLevels[i].NewMaxVelocityX;
+					_endlessModeAudio.pitch = DifficultyLevels[i].NewAudioPitch;
+				}
 			}
 		}
 	}
