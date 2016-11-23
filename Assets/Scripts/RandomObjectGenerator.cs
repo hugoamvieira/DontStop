@@ -29,7 +29,11 @@ public class RandomObjectGenerator : MonoBehaviour
 	// Tracks the objects that were already spawned (for destruction purposes). float value is spawn x position.
 	private Queue<KeyValuePair<GameObject, float>> _spawnedObjects;
 
+	private float _lastObjSpawnXPos; // The X-axis position of the last spawned object
+	private int _noOfObjects;
+
 	public SpawnableObject[] spawnableList; // Tracks the objects that can be spawned
+	public float ObjSpawnMinDistance; // The delta variable that will not allow an object to be spawned near another
 	public int lowerSpawnDistance; // Minimum distance a spawnable can appear in front of the player
 	public int upperSpawnDistance; // Maximum distance a spawnable can appear in front of the player
 	public float objExpirationDistance; // Minimum elapsed distance at which the object will be automatically destroyed
@@ -49,6 +53,7 @@ public class RandomObjectGenerator : MonoBehaviour
 		OnValidate();
 		_spawnedObjects = new Queue<KeyValuePair<GameObject, float>>();
 		_playerRef = GameObject.Find("Player").gameObject.GetComponent<PlayerController>();
+		_lastObjSpawnXPos = 0f;
 	}
 
 
@@ -82,11 +87,15 @@ public class RandomObjectGenerator : MonoBehaviour
 			// Generate object position in X axis
 			var randXPos = _rand.Next(lowerSpawnDistance, upperSpawnDistance);
 
-			// Get player X-axis position
-			var playerXPos = _playerRef.PosX;
-
 			// Add that random value to the player position
-			var objXPos = randXPos + playerXPos;
+			var objXPos = randXPos + _playerRef.PosX;
+
+			if (_noOfObjects > 0)
+			{
+				// The new object will not be created if the distance between it and the old object is less than ObjSpawnMinDistance
+				var newOldObjDistDelta = Mathf.Abs(objXPos - _lastObjSpawnXPos);
+				if (newOldObjDistDelta < ObjSpawnMinDistance) return;
+			}
 
 			// Create a vector with the position
 			Vector3 generatedObjectPosition = new Vector3(objXPos, chosenObj.gameYPos);
@@ -100,6 +109,11 @@ public class RandomObjectGenerator : MonoBehaviour
 
 			// Push the instantiated object and its X-axis position to the queue
 			_spawnedObjects.Enqueue(new KeyValuePair<GameObject, float>(sceneObject, objXPos));
+
+			// Increment the number of spawned objects and set the new last object position as the position of the object that
+			// was created
+			++_noOfObjects;
+			_lastObjSpawnXPos = objXPos;
 		}
 	}
 
