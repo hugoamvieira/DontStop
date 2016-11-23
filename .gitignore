@@ -21,12 +21,18 @@ ExportedObj/
 *.booproj
 *.svd
 
+
 # Rider Generated Files
 /.idea/
+
 
 # Unity3D generated meta files
 *.pidb.meta
 
+
+# Tiled2Unity
+Assets/Tiled2Unity/
+Assets/Tiled2Unity.meta
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
