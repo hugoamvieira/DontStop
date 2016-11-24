@@ -33,7 +33,7 @@ public class GameBehaviour : MonoBehaviour
 		Time.timeScale = 1f;
 
 		// Set number of existing levels
-		NumberOfLevels = 5;
+		NumberOfLevels = 2;
 	}
 
 
