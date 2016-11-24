@@ -104,6 +104,30 @@ public class PlayerController : MonoBehaviour
 		private set { _playerScore = value; }
 	}
 
+	private int _obstaclesJumped;
+
+	public int ObstaclesJumped
+	{
+		get { return _obstaclesJumped; }
+		set { _obstaclesJumped = value; }
+	}
+
+	private bool _levelCompleted;
+
+	public bool LevelCompleted
+	{
+		get { return _levelCompleted; }
+		set { _levelCompleted = value; }
+	}
+
+	private float _levelCompleteTime;
+
+	public float LevelCompleteTime
+	{
+		get { return _levelCompleteTime; }
+		set { _levelCompleteTime = value; }
+	}
+
 	// Power-ups' / Score variables (Because otherwise you would only be able to set these on the powerups which are generated
 	// at runtime)
 	private int _score;
@@ -135,7 +159,7 @@ public class PlayerController : MonoBehaviour
 		// If it was on the Update method, power ups would spawn in the air whenever the player jumped.
 		PosY = transform.position.y;
 
-		// Set score
+		// Set score and death count
 		PlayerScore = 0;
 
 		// Reset FX played counters
@@ -261,8 +285,19 @@ public class PlayerController : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D triggerObject)
 	{
-		if (!triggerObject.gameObject.name.Contains("Obstacle")) return;
-		PlayerScore += _score;
+		if (triggerObject.gameObject.name.Contains("Obstacle"))
+		{
+			PlayerScore += _score;
+			ObstaclesJumped++;
+		}
+
+		else if (triggerObject.gameObject.name.Equals("EndGame"))
+		{
+			LevelCompleteTime = Time.timeSinceLevelLoad;
+			LevelCompleted = true;
+		}
+
+		else return;
 	}
 
 

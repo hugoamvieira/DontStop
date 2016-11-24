@@ -7,6 +7,8 @@ public class GameBehaviour : MonoBehaviour
 	private float _timeCounter;
 	private float _lastFramerate;
 	private PlayerController _playerRef;
+	private LevelModeManager _levelRef;
+	private GUIController _guiRef;
 	private const float RefreshTime = 0.5f;
 
 	// Number of levels
@@ -21,6 +23,12 @@ public class GameBehaviour : MonoBehaviour
 		if (GameObject.Find("Player") != null)
 			_playerRef = GameObject.Find("Player").GetComponent<PlayerController>();
 
+		if (GameObject.Find("Level Manager").GetComponent<LevelModeManager>() != null)
+			_levelRef = GameObject.Find("Level Manager").GetComponent<LevelModeManager>();
+
+		if (GameObject.Find("Level Manager").GetComponent<GUIController>() != null)
+			_guiRef = GameObject.Find("Level Manager").GetComponent<GUIController>();
+
 		// Set timeScale as 1 (For restarting purposes)
 		Time.timeScale = 1f;
 
@@ -34,15 +42,26 @@ public class GameBehaviour : MonoBehaviour
 		// UpdateFPS();
 		if (_playerRef != null && _playerRef.GameOver)
 			EndGame();
+
+		if (_playerRef != null && _playerRef.LevelCompleted && _levelRef != null)
+			LevelCompleted();
+	}
+
+
+	private void LevelCompleted()
+	{
+		var playTime = _playerRef.LevelCompleteTime;
+		Time.timeScale = 0f;
+
+		var noOfStars = _levelRef.LevelCompleted(playTime);
+		_guiRef.ToggleLevelCompleteMenu(noOfStars);
 	}
 
 
 	private void EndGame()
 	{
-		GUIController guiRef = GameObject.Find("Level Manager").gameObject.GetComponent<GUIController>();
-
 		Time.timeScale = 0f;
-		guiRef.ToggleGameOverMenu();
+		_guiRef.ToggleGameOverMenu();
 	}
 
 

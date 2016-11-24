@@ -5,6 +5,9 @@ public class LevelModeManager : MonoBehaviour
 	private AudioSource _endlessModeAudio;
 	private PlayerController _playerRef;
 	private bool _gameOverPlaying;
+	private int _noOfStars;
+
+	public float StarLevelTime;
 
 	void Awake()
 	{
@@ -31,5 +34,16 @@ public class LevelModeManager : MonoBehaviour
 			_endlessModeAudio.Play();
 			_gameOverPlaying = true;
 		}
+	}
+
+
+	public int LevelCompleted(float completeTime)
+	{
+		_noOfStars = 1;
+
+		if (completeTime < StarLevelTime)
+			_noOfStars = 2;
+
+		return _noOfStars;
 	}
 }

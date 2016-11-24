@@ -6,11 +6,14 @@ public class GUIController : MonoBehaviour
 {
 	private GameObject _overlayPanel;
 	private GameObject _gameOverPanel;
+
+	private GameObject _levelCompletedPanel;
+	private GameObject _starCompleted2;
+
 	private GameObject _shieldPowerupGUI;
 	private GameObject _slowmoPowerupGUI;
 	private Text _guiDistanceText;
 	private Text _scoreText;
-
 	private PlayerController _playerRef;
 
 	public const string MainMenuSceneName = "MainMenu";
@@ -21,6 +24,14 @@ public class GUIController : MonoBehaviour
 	{
 		_overlayPanel = GameObject.Find("PauseMenu");
 		_gameOverPanel = GameObject.Find("GameOverMenu");
+
+		if (GameObject.Find("LevelCompletedMenu"))
+		{
+			_levelCompletedPanel = GameObject.Find("LevelCompletedMenu");
+			_levelCompletedPanel.SetActive(false);
+			_starCompleted2 = GameObject.Find("StarComplete2");
+		}
+
 		_guiDistanceText = GameObject.Find("DistanceValue").GetComponent<Text>();
 		_scoreText = GameObject.Find("ScoreValue").GetComponent<Text>();
 		_shieldPowerupGUI = GameObject.Find("ShieldPowerupGUI");
@@ -68,6 +79,18 @@ public class GUIController : MonoBehaviour
 		{
 			Time.timeScale = _playerRef.SlowmoActive ? PowerUpController.SlowmoFactor : 1f;
 			_overlayPanel.SetActive(false);
+		}
+	}
+
+
+	public void ToggleLevelCompleteMenu(int noOfStars)
+	{
+		if (_levelCompletedPanel == null) return; // This should never happen tbh
+		_levelCompletedPanel.SetActive(true);
+
+		if (noOfStars == 1)
+		{
+			_starCompleted2.SetActive(false);
 		}
 	}
 
