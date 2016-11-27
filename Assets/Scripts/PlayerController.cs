@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -272,21 +273,17 @@ public class PlayerController : MonoBehaviour
 		if (!ShieldActive && ObjectsCollected == 0)
 			GameOver = true;
 
-		else
+		else if (ShieldActive)
 		{
 			DeactivatePlayerShield();
+			SpawnPlayerAfterObject(collisionObject);
+			StartCoroutine("RespawnPlayer");
+		}
+
+		else if (!ShieldActive && ObjectsCollected > 0)
+		{
 			ObjectsCollected = 0;
-
-			var newPlayerPosX = collisionObject.transform.position.x +
-			                    collisionObject.gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x + 0.2f;
-
-			// Slow player speed down
-			_playerRigidbody.AddForce(new Vector2(_collisionDecel, 0));
-
-			// Spawn the player on the other side of the box
-			gameObject.transform.position = new Vector3(newPlayerPosX, PosY, 0);
-
-			// Give that respawn effect
+			SpawnPlayerAfterObject(collisionObject);
 			StartCoroutine("RespawnPlayer");
 		}
 	}
@@ -319,9 +316,22 @@ public class PlayerController : MonoBehaviour
 	}
 
 
+	void SpawnPlayerAfterObject(Collision2D collisionObject)
+	{
+		var newPlayerPosX = collisionObject.transform.position.x +
+		                    collisionObject.gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x + 0.2f;
+
+		// Slow player speed down
+		_playerRigidbody.AddForce(new Vector2(_collisionDecel, 0));
+
+		// Spawn the player on the other side of the box
+		gameObject.transform.position = new Vector3(newPlayerPosX, PosY, 0);
+	}
+
 	// Gives that cool respawn effect by switching the transparency on the player
 	private IEnumerator RespawnPlayer()
 	{
+		// Set the player transparent
 		_playerSr.color = new Color(_playerSr.color.r, _playerSr.color.g, _playerSr.color.b, RespawnTransparency);
 		yield return new WaitForSeconds(RespawnTimer);
 

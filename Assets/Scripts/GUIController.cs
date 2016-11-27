@@ -16,9 +16,11 @@ public class GUIController : MonoBehaviour
 	private Text _scoreObjectCount;
 	private Text _guiDistanceText;
 	private Text _scoreText;
+	private Image _scoreObjectImage;
 
 	private PlayerController _playerRef;
 
+	public Sprite ScoreObjectSprite;
 	public const string MainMenuSceneName = "MainMenu";
 	public static bool Paused { get; private set; }
 
@@ -40,6 +42,9 @@ public class GUIController : MonoBehaviour
 		_scoreObjectCount = GameObject.Find("ScoreObjectCount").GetComponent<Text>();
 		_shieldPowerupGUI = GameObject.Find("ShieldPowerupGUI");
 		_slowmoPowerupGUI = GameObject.Find("SlowmoPowerupGUI");
+
+		_scoreObjectImage = GameObject.Find("ScoreObjectImg").GetComponent<Image>();
+		_scoreObjectImage.sprite = ScoreObjectSprite;
 
 		_playerRef = GameObject.Find("Player").gameObject.GetComponent<PlayerController>();
 
