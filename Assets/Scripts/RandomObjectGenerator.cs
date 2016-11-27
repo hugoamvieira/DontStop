@@ -14,10 +14,10 @@ public class RandomObjectGenerator : MonoBehaviour
 	[System.Serializable]
 	public class SpawnableObject
 	{
-		public GameObject gameObj;
-		public float gameYPos; // The Y pos at which the object spawns (for non rigidbody components)
-		public float objWeight; // The weight of the object (in comparison with others)
-		public int spawnChance; // Chance an item has of spawning. This holds x in 1/x chances
+		public GameObject GameObj;
+		public float GameYPos; // The Y pos at which the object spawns (for non rigidbody components)
+		public float ObjWeight; // The weight of the object (in comparison with others)
+		public int SpawnChance; // Chance an item has of spawning. This holds x in 1/x chances
 	}
 
 
@@ -32,19 +32,19 @@ public class RandomObjectGenerator : MonoBehaviour
 	private float _lastObjSpawnXPos; // The X-axis position of the last spawned object
 	private int _noOfObjects;
 
-	public SpawnableObject[] spawnableList; // Tracks the objects that can be spawned
+	public SpawnableObject[] SpawnableList; // Tracks the objects that can be spawned
 	public float ObjSpawnMinDistance; // The delta variable that will not allow an object to be spawned near another
-	public int lowerSpawnDistance; // Minimum distance a spawnable can appear in front of the player
-	public int upperSpawnDistance; // Maximum distance a spawnable can appear in front of the player
-	public float objExpirationDistance; // Minimum elapsed distance at which the object will be automatically destroyed
+	public int LowerSpawnDistance; // Minimum distance a spawnable can appear in front of the player
+	public int UpperSpawnDistance; // Maximum distance a spawnable can appear in front of the player
+	public float ObjExpirationDistance; // Minimum elapsed distance at which the object will be automatically destroyed
 
 
 	// Updates when user messes in inspector and once at runtime
 	void OnValidate()
 	{
 		_totalSpawnWeight = 0f;
-		foreach (var spawnable in spawnableList)
-			_totalSpawnWeight += spawnable.objWeight;
+		foreach (var spawnable in SpawnableList)
+			_totalSpawnWeight += spawnable.ObjWeight;
 	}
 
 
@@ -65,27 +65,27 @@ public class RandomObjectGenerator : MonoBehaviour
 
 
 	// This function picks an object from the array of spawnable objects based on its weight and spawns it
-	// with "spawnChance" of spawning.
+	// with "SpawnChance" of spawning.
 	private void RandomlyInstantiateObject()
 	{
 		// Choose which object will be spawned from array
 		float pick = Random.value * _totalSpawnWeight;
 		int index = 0;
-		float cumulativeWeight = spawnableList[0].objWeight;
+		float cumulativeWeight = SpawnableList[0].ObjWeight;
 
-		while (pick > cumulativeWeight && index < spawnableList.Length - 1)
+		while (pick > cumulativeWeight && index < SpawnableList.Length - 1)
 		{
 			index++;
-			cumulativeWeight += spawnableList[index].objWeight;
+			cumulativeWeight += SpawnableList[index].ObjWeight;
 		}
 
 		// Get the chosen object (for better code readability below)
-		SpawnableObject chosenObj = spawnableList[index];
+		SpawnableObject chosenObj = SpawnableList[index];
 
-		if (_rand.Next(1, chosenObj.spawnChance + 1) == chosenObj.spawnChance)
+		if (_rand.Next(1, chosenObj.SpawnChance + 1) == chosenObj.SpawnChance)
 		{
 			// Generate object position in X axis
-			var randXPos = _rand.Next(lowerSpawnDistance, upperSpawnDistance);
+			var randXPos = _rand.Next(LowerSpawnDistance, UpperSpawnDistance);
 
 			// Add that random value to the player position
 			var objXPos = randXPos + _playerRef.PosX;
@@ -98,13 +98,13 @@ public class RandomObjectGenerator : MonoBehaviour
 			}
 
 			// Create a vector with the position
-			Vector3 generatedObjectPosition = new Vector3(objXPos, chosenObj.gameYPos);
+			Vector3 generatedObjectPosition = new Vector3(objXPos, chosenObj.GameYPos);
 
 			// Set object position
-			chosenObj.gameObj.transform.position = generatedObjectPosition;
+			chosenObj.GameObj.transform.position = generatedObjectPosition;
 
 			// Instantiate object as a child of RandomlyGeneratedSet
-			GameObject sceneObject = Instantiate(chosenObj.gameObj);
+			GameObject sceneObject = Instantiate(chosenObj.GameObj);
 			sceneObject.transform.SetParent(GameObject.Find("RandomlyGeneratedSet").transform);
 
 			// Push the instantiated object and its X-axis position to the queue
@@ -134,8 +134,8 @@ public class RandomObjectGenerator : MonoBehaviour
 		if (oldestObj.Key == null)
 			_spawnedObjects.Dequeue();
 
-		// Check player - object absolute distance against objExpirationDistance
-		if (!(Mathf.Abs(_playerRef.PosX) - Mathf.Abs(oldestObj.Value) > objExpirationDistance)) return;
+		// Check player - object absolute distance against ObjExpirationDistance
+		if (!(Mathf.Abs(_playerRef.PosX) - Mathf.Abs(oldestObj.Value) > ObjExpirationDistance)) return;
 
 		// Destroy object and remove it from queue
 		DestroyObject(oldestObj.Key);

@@ -7,9 +7,6 @@ public class GUIController : MonoBehaviour
 	private GameObject _overlayPanel;
 	private GameObject _gameOverPanel;
 
-	private GameObject _levelCompletedPanel;
-	private GameObject _starCompleted2;
-
 	private GameObject _shieldPowerupGUI;
 	private GameObject _slowmoPowerupGUI;
 
@@ -27,26 +24,20 @@ public class GUIController : MonoBehaviour
 
 	void Awake()
 	{
+		// GameObjects
 		_overlayPanel = GameObject.Find("PauseMenu");
 		_gameOverPanel = GameObject.Find("GameOverMenu");
-
-		if (GameObject.Find("LevelCompletedMenu"))
-		{
-			_levelCompletedPanel = GameObject.Find("LevelCompletedMenu");
-			_levelCompletedPanel.SetActive(false);
-			_starCompleted2 = GameObject.Find("StarComplete2");
-		}
-
-		_guiDistanceText = GameObject.Find("DistanceValue").GetComponent<Text>();
-		_scoreText = GameObject.Find("ScoreValue").GetComponent<Text>();
-		_scoreObjectCount = GameObject.Find("ScoreObjectCount").GetComponent<Text>();
 		_shieldPowerupGUI = GameObject.Find("ShieldPowerupGUI");
 		_slowmoPowerupGUI = GameObject.Find("SlowmoPowerupGUI");
 
+		// Object Components
+		_guiDistanceText = GameObject.Find("DistanceValue").GetComponent<Text>();
+		_scoreText = GameObject.Find("ScoreValue").GetComponent<Text>();
+		_scoreObjectCount = GameObject.Find("ScoreObjectCount").GetComponent<Text>();
 		_scoreObjectImage = GameObject.Find("ScoreObjectImg").GetComponent<Image>();
-		_scoreObjectImage.sprite = ScoreObjectSprite;
-
 		_playerRef = GameObject.Find("Player").gameObject.GetComponent<PlayerController>();
+
+		_scoreObjectImage.sprite = ScoreObjectSprite;
 
 		_overlayPanel.SetActive(false);
 		_gameOverPanel.SetActive(false);
@@ -91,18 +82,6 @@ public class GUIController : MonoBehaviour
 		{
 			Time.timeScale = _playerRef.SlowmoActive ? PowerUpController.SlowmoFactor : 1f;
 			_overlayPanel.SetActive(false);
-		}
-	}
-
-
-	public void ToggleLevelCompleteMenu(int noOfStars)
-	{
-		if (_levelCompletedPanel == null) return; // This should never happen tbh
-		_levelCompletedPanel.SetActive(true);
-
-		if (noOfStars == 1)
-		{
-			_starCompleted2.SetActive(false);
 		}
 	}
 

@@ -1,7 +1,6 @@
 ﻿// TODO: Implement Object Polling instead of new tile creation indefinitely.
 
 using UnityEngine;
-using System.Collections.Generic;
 
 [RequireComponent(typeof(SpriteRenderer))] // Requires a SpriteRenderer element
 public class Tiling : MonoBehaviour

@@ -3,14 +3,17 @@
 public class PowerUpController : MonoBehaviour
 {
 	private PlayerController _playerRef;
+
 	public static float ShieldEnableTime { get; set; }
 	public static float SlowmoEnableTime { get; set; }
 	public static float SlowmoFactor { get; set; }
+
 
 	void Awake()
 	{
 		_playerRef = GameObject.Find("Player").gameObject.GetComponent<PlayerController>();
 	}
+
 
 	void OnTriggerEnter2D(Collider2D collider)
 	{

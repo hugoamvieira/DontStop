@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-	#region VARIABLES
-
 	// Components
 	private Animator _anim;
 	private Rigidbody2D _playerRigidbody;
@@ -113,22 +110,6 @@ public class PlayerController : MonoBehaviour
 		set { _obstaclesJumped = value; }
 	}
 
-	private bool _levelCompleted;
-
-	public bool LevelCompleted
-	{
-		get { return _levelCompleted; }
-		set { _levelCompleted = value; }
-	}
-
-	private float _levelCompleteTime;
-
-	public float LevelCompleteTime
-	{
-		get { return _levelCompleteTime; }
-		set { _levelCompleteTime = value; }
-	}
-
 	private int _objectsCollected;
 
 	public int ObjectsCollected
@@ -151,10 +132,9 @@ public class PlayerController : MonoBehaviour
 	private bool _crouchFXPlayed;
 
 	// Player Colliders
-	[SerializeField] private PolygonCollider2D[] _playerColliders;
+	[SerializeField] private PolygonCollider2D[] _playerColliders; // Assigned in the editor
 	[SerializeField] private int _currentColliderIndex;
 
-	#endregion
 
 	void Awake()
 	{
@@ -296,14 +276,6 @@ public class PlayerController : MonoBehaviour
 			PlayerScore += _score;
 			ObstaclesJumped++;
 		}
-
-		else if (triggerObject.gameObject.name.Equals("EndGame"))
-		{
-			LevelCompleteTime = Time.timeSinceLevelLoad;
-			LevelCompleted = true;
-		}
-
-		else return;
 	}
 
 
@@ -316,22 +288,20 @@ public class PlayerController : MonoBehaviour
 	}
 
 
+	// Spawns player after the object it crashed into
 	void SpawnPlayerAfterObject(Collision2D collisionObject)
 	{
 		var newPlayerPosX = collisionObject.transform.position.x +
 		                    collisionObject.gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x + 0.2f;
 
-		// Slow player speed down
 		_playerRigidbody.AddForce(new Vector2(_collisionDecel, 0));
-
-		// Spawn the player on the other side of the box
 		gameObject.transform.position = new Vector3(newPlayerPosX, PosY, 0);
 	}
+
 
 	// Gives that cool respawn effect by switching the transparency on the player
 	private IEnumerator RespawnPlayer()
 	{
-		// Set the player transparent
 		_playerSr.color = new Color(_playerSr.color.r, _playerSr.color.g, _playerSr.color.b, RespawnTransparency);
 		yield return new WaitForSeconds(RespawnTimer);
 

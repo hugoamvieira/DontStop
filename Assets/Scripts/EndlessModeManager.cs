@@ -46,6 +46,7 @@ public class EndlessModeManager : MonoBehaviour
 
 		if (!_playerRef.GameOver)
 		{
+			// Iterate through the difficulty levels and check player actual distance with stated distance in the object
 			for (var i = 0; i < DifficultyLevels.Length; i++)
 			{
 				if (_playerRef.DistanceElapsed > DifficultyLevels[i].PlayerDistanceTrigger && !DifficultyLevels[i].Active)
