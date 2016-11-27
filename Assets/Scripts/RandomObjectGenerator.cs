@@ -5,6 +5,7 @@
  */
 
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 // Bug: Spawn doesn't verify if tiling has happened at the position it's going to spawn the object
@@ -68,6 +69,7 @@ public class RandomObjectGenerator : MonoBehaviour
 	// with "SpawnChance" of spawning.
 	private void RandomlyInstantiateObject()
 	{
+		var spawn = true;
 		// Choose which object will be spawned from array
 		float pick = Random.value * _totalSpawnWeight;
 		int index = 0;
@@ -85,7 +87,7 @@ public class RandomObjectGenerator : MonoBehaviour
 		if (_rand.Next(1, chosenObj.SpawnChance + 1) == chosenObj.SpawnChance)
 		{
 			// Generate object position in X axis
-			var randXPos = _rand.Next(LowerSpawnDistance, UpperSpawnDistance);
+			var randXPos = _rand.Next(LowerSpawnDistance, UpperSpawnDistance + 1); // +1 because Next() is [x,y[
 
 			// Add that random value to the player position
 			var objXPos = randXPos + _playerRef.PosX;
@@ -93,8 +95,8 @@ public class RandomObjectGenerator : MonoBehaviour
 			if (_noOfObjects > 0)
 			{
 				// The new object will not be created if the distance between it and the old object is less than ObjSpawnMinDistance
-				var newOldObjDistDelta = Mathf.Abs(objXPos - _lastObjSpawnXPos);
-				if (newOldObjDistDelta < ObjSpawnMinDistance) return;
+				var objDistanceDelta = objXPos - _lastObjSpawnXPos;
+				if (objDistanceDelta < 0f || objDistanceDelta <= ObjSpawnMinDistance) return;
 			}
 
 			// Create a vector with the position
@@ -107,13 +109,12 @@ public class RandomObjectGenerator : MonoBehaviour
 			GameObject sceneObject = Instantiate(chosenObj.GameObj);
 			sceneObject.transform.SetParent(GameObject.Find("RandomlyGeneratedSet").transform);
 
-			// Push the instantiated object and its X-axis position to the queue
-			_spawnedObjects.Enqueue(new KeyValuePair<GameObject, float>(sceneObject, objXPos));
-
-			// Increment the number of spawned objects and set the new last object position as the position of the object that
-			// was created
+			// Object was instantiated.
 			++_noOfObjects;
 			_lastObjSpawnXPos = objXPos;
+
+			// Push the instantiated object and its X-axis position to the queue
+			_spawnedObjects.Enqueue(new KeyValuePair<GameObject, float>(sceneObject, objXPos));
 		}
 	}
 
