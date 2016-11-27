@@ -5,7 +5,6 @@
  */
 
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 // Bug: Spawn doesn't verify if tiling has happened at the position it's going to spawn the object
@@ -69,7 +68,6 @@ public class RandomObjectGenerator : MonoBehaviour
 	// with "SpawnChance" of spawning.
 	private void RandomlyInstantiateObject()
 	{
-		var spawn = true;
 		// Choose which object will be spawned from array
 		float pick = Random.value * _totalSpawnWeight;
 		int index = 0;
