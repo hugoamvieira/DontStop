@@ -12,8 +12,11 @@ public class GUIController : MonoBehaviour
 
 	private GameObject _shieldPowerupGUI;
 	private GameObject _slowmoPowerupGUI;
+
+	private Text _scoreObjectCount;
 	private Text _guiDistanceText;
 	private Text _scoreText;
+
 	private PlayerController _playerRef;
 
 	public const string MainMenuSceneName = "MainMenu";
@@ -34,6 +37,7 @@ public class GUIController : MonoBehaviour
 
 		_guiDistanceText = GameObject.Find("DistanceValue").GetComponent<Text>();
 		_scoreText = GameObject.Find("ScoreValue").GetComponent<Text>();
+		_scoreObjectCount = GameObject.Find("ScoreObjectCount").GetComponent<Text>();
 		_shieldPowerupGUI = GameObject.Find("ShieldPowerupGUI");
 		_slowmoPowerupGUI = GameObject.Find("SlowmoPowerupGUI");
 
@@ -52,6 +56,9 @@ public class GUIController : MonoBehaviour
 
 		// Set the score
 		_scoreText.text = _playerRef.PlayerScore.ToString();
+
+		// Set the no. of scored objects
+		_scoreObjectCount.text = "x" + _playerRef.ObjectsCollected.ToString("00");
 
 		// Check if shield / slowmo is active and enable shield in GUI acordingly
 		_shieldPowerupGUI.SetActive(_playerRef.ShieldActive);

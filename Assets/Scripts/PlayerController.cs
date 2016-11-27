@@ -128,6 +128,14 @@ public class PlayerController : MonoBehaviour
 		set { _levelCompleteTime = value; }
 	}
 
+	private int _objectsCollected;
+
+	public int ObjectsCollected
+	{
+		get { return _objectsCollected; }
+		set { _objectsCollected = value; }
+	}
+
 	// Power-ups' / Score variables (Because otherwise you would only be able to set these on the powerups which are generated
 	// at runtime)
 	private int _score;
@@ -261,12 +269,13 @@ public class PlayerController : MonoBehaviour
 		// Ignore collision if the player didn't collide with an obstacle
 		if (!collisionObject.gameObject.name.Contains("Obstacle")) return;
 
-		if (!ShieldActive)
+		if (!ShieldActive && ObjectsCollected == 0)
 			GameOver = true;
 
 		else
 		{
 			DeactivatePlayerShield();
+			ObjectsCollected = 0;
 
 			var newPlayerPosX = collisionObject.transform.position.x +
 			                    collisionObject.gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size.x + 0.2f;

@@ -21,7 +21,7 @@ public class PowerUpController : MonoBehaviour
 		}
 
 		// Player collided with Shield power up
-		else
+		else if (gameObject.name.Contains("ShieldPowerUp") && collider.gameObject.name.Equals("Player"))
 		{
 			_playerRef.CollidedShieldPowerup = true;
 		}
@@ -34,6 +34,11 @@ public class PowerUpController : MonoBehaviour
 		if (gameObject.name.Contains("SlowMoPowerUp") && collider.gameObject.name.Equals("Player"))
 		{
 			_playerRef.CollidedSlowmoPowerup = false;
+		}
+
+		else if (gameObject.name.Contains("ScoreObject") && collider.gameObject.name.Equals("Player"))
+		{
+			_playerRef.ObjectsCollected++;
 		}
 
 		// Player ended collision with Shield power up
