@@ -150,6 +150,7 @@ public class PlayerController : MonoBehaviour
 
 		// Set score and death count
 		PlayerScore = 0;
+		ObjectsCollected = 1;
 
 		// Reset FX played counters
 		_jumpFXPlayed = false;
