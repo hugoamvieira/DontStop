@@ -10,9 +10,6 @@ public class GameBehaviour : MonoBehaviour
 	private GUIController _guiRef;
 	private const float RefreshTime = 0.5f;
 
-	// Number of levels
-	public static int NumberOfLevels { get; private set; }
-
 	void Awake()
 	{
 		// Set game FPS
@@ -27,9 +24,6 @@ public class GameBehaviour : MonoBehaviour
 
 		// Set timeScale as 1 (For restarting purposes)
 		Time.timeScale = 1f;
-
-		// Set number of existing levels
-		NumberOfLevels = 2;
 	}
 
 
