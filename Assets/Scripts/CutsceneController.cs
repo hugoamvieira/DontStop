@@ -12,9 +12,16 @@ public class CutsceneController : MonoBehaviour
 	}
 
 
+	void FixedUpdate()
+	{
+		if (Input.GetMouseButtonDown(0))
+			_gameRef.LoadLevel("EndlessMode");
+	}
+
+
 	private IEnumerator StartEndlessMode()
 	{
-		yield return new WaitForSeconds(6f);
+		yield return new WaitForSeconds(5f);
 		_gameRef.LoadLevel("EndlessMode");
 	}
 }
