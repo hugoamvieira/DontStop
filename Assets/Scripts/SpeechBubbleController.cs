@@ -15,7 +15,11 @@ public class SpeechBubbleController : MonoBehaviour
 
 	private IEnumerator SpeechBubblePopup()
 	{
+		_speechBubble.SetActive(false);
+
+		yield return new WaitForSeconds(1f);
 		_speechBubble.SetActive(true);
+
 		yield return new WaitForSeconds(3f);
 		_speechBubble.SetActive(false);
 	}
